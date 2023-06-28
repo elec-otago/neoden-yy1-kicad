@@ -22,7 +22,7 @@ The Neoden YY1 needs to be told what footprints that it is using. Some common co
                 ("SOT-([0-9]+)\Z", "SOT_\g<1>"), # SOT-23 -> SOT-23
              ]
 
-The converter will leave footprints alone that it does not recognize. If you find one conversions that you'd like adto be done. Pleast file an issue on github.
+The converter will leave footprints alone that it does not recognize. If you find one conversions that you'd like added to the list, please file an issue on github (https://github.com/elec-otago/neoden-yy1-kicad)
 
 ### Author
 
