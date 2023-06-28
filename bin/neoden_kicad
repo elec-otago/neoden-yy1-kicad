@@ -5,7 +5,7 @@
 
 import argparse
 import csv
-
+from neoden_kicad import convert
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -29,32 +29,8 @@ if __name__ == "__main__":
         new_data.append(dict(zip(header, row)))
 
 
-    for row in new_data:
-        row['Comment'] = row['Val']
-        row['Head'] = '00'
-        row['FeederNo'] = '0'
-        row['Mount Speed (%)'] = '100'
-        row['Pick Height(mm)'] = '0'
-        row['Place Height(mm)'] = '0'
-        row['Mode'] = '1'
-        row['Skip'] = '0'
+    output_data, output_header = convert(new_data)
 
-        footprint = row['Package']
-        try:
-            parts = footprint.split('_')
-            if footprint.endswith('Metric'):
-                row['Footprint'] = parts[1] + 'D'
-            else:
-                row['Footprint'] = parts[1]
-        except Exception as e:
-            print(e)
-            row['Footprint'] = footprint
-
-    output_data = []
-    output_header = ['Designator', 'Val', 'Footprint', 'Mid X', 'Mid Y', 
-                     'Rotation', 'Head', 'FeederNo', 'Mount Speed (%)', 'Pick Height(mm)', 'Place Height(mm)', 'Mode', 'Skip']
-    for row in new_data:
-        output_data.append([row[key] for key in output_header])
 
     ## Write the new CSV file here
     with open(ARGS.out, "w") as f:

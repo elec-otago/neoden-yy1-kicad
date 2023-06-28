@@ -4,7 +4,7 @@ with open('README.md') as f:
     readme = f.read()
 
 setup(name='neoden_kicad',
-    version='1.0.0a1',
+    version='1.0.0a2',
     description='Converter for Neoden Pick and Place machine',
     long_description=readme,
     long_description_content_type="text/markdown",
