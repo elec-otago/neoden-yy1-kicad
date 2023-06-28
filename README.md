@@ -1,4 +1,4 @@
-# neoden-yy1-kicad
+# neoden_kicad
 
 Post-processor to allow Kicad centroid files to work on the Neoden YY1 pick and place machine. This package contains a script that reads CPL (centroid position) files and modifies their contents to be readable by the [Neoden YY1](https://www.neodensmt.com/pick-and-place-machine/neoden-yy1-pick-and-place-machine.html) small pick and place machine.
 
@@ -6,10 +6,10 @@ Post-processor to allow Kicad centroid files to work on the Neoden YY1 pick and 
 
     pip install neoden_kicad
 
-
 ## Usage
 
-    neoden_kicad --pos my_pos.csv --out neoden_pos.csv
+If you have exported a CPL file from kicad (Component Placement file) called CPL-mypos.csv, then you can convert it to neoden-readable format using:
+    neoden_kicad --pos CPL-mypos.csv --out neoden_pos.csv
 
 ## Footprint conversions
 
@@ -23,3 +23,7 @@ The Neoden YY1 needs to be told what footprints that it is using. Some common co
              ]
 
 The converter will leave footprints alone that it does not recognize. If you find one conversions that you'd like adto be done. Pleast file an issue on github.
+
+### Author
+
+Written by Tim Molteno tim@elec.ac.nz
