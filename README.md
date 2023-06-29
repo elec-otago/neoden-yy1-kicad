@@ -13,6 +13,7 @@ If you're  unfortunate enough to be stuck with windows, try contacting your syst
 ## Usage
 
 If you have exported a CPL file from kicad (Component Placement file) called CPL-mypos.csv, then you can convert it to neoden-readable format using:
+
     neoden_kicad --pos CPL-mypos.csv --out neoden_pos.csv
 
 ## Footprint conversions
