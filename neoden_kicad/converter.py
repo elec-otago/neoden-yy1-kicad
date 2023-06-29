@@ -29,8 +29,15 @@ def package_to_footprint(package):
 def convert(input_data):
     # Convert the input dictionary to the output dictionary
 
+    # List of substitutions of headers
+    substitute_headers = {
+        'Comment': 'Val',
+        'Ref': 'Designator',
+        'Mid X': 'PosX',
+        'Mid Y': 'PosY',
+        'Rotation': 'Rot'
+    } 
     for row in input_data:
-        row['Comment'] = row['Val']
         row['Head'] = '00'
         row['FeederNo'] = '0'
         row['Mount Speed (%)'] = '100'
@@ -39,9 +46,16 @@ def convert(input_data):
         row['Mode'] = '1'
         row['Skip'] = '0'
         row['Footprint'] = package_to_footprint(row['Package'])
+	
+        for key in substitute_headers.keys():
+            try:
+                row[key] = row[substitute_headers[key]]
+            except:
+                pass
 
     output_data = []
-    output_header = ['Designator', 'Val', 'Footprint', 'Mid X', 'Mid Y', 
+    # List of output headers required by NeoDen. 
+    output_header = ['Designator', 'Comment', 'Footprint', 'Mid X', 'Mid Y', 
                      'Rotation', 'Head', 'FeederNo', 'Mount Speed (%)', 'Pick Height(mm)', 'Place Height(mm)', 'Mode', 'Skip']
     for row in input_data:
         output_data.append([row[key] for key in output_header])
