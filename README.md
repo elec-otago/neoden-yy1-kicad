@@ -4,7 +4,11 @@ Post-processor to allow Kicad centroid files to work on the Neoden YY1 pick and 
 
 ## Installation
 
-    pip install neoden_kicad
+On a modern linux distribution, try the following:
+
+    pipx install neoden_kicad
+
+If you're  unfortunate enough to be stuck with windows, try contacting your system administrator.
 
 ## Usage
 
