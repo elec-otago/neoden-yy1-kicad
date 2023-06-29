@@ -28,7 +28,7 @@ def package_to_footprint(package):
 
 def convert(input_data):
     # Convert the input dictionary to the output dictionary
-
+    line = 0
     # List of substitutions of headers
     substitute_headers = {
         'Comment': 'Val',
@@ -36,28 +36,39 @@ def convert(input_data):
         'Mid X': 'PosX',
         'Mid Y': 'PosY',
         'Rotation': 'Rot'
-    } 
-    for row in input_data:
-        row['Head'] = '00'
-        row['FeederNo'] = '0'
-        row['Mount Speed (%)'] = '100'
-        row['Pick Height(mm)'] = '0'
-        row['Place Height(mm)'] = '0'
-        row['Mode'] = '1'
-        row['Skip'] = '0'
-        row['Footprint'] = package_to_footprint(row['Package'])
-	
-        for key in substitute_headers.keys():
-            try:
-                row[key] = row[substitute_headers[key]]
-            except:
-                pass
+    }
+    try:
+        for row in input_data:
+            line = line+1
+            row['Head'] = '00'
+            row['FeederNo'] = '0'
+            row['Mount Speed (%)'] = '100'
+            row['Pick Height(mm)'] = '0'
+            row['Place Height(mm)'] = '0'
+            row['Mode'] = '1'
+            row['Skip'] = '0'
+            row['Footprint'] = package_to_footprint(row['Package'])
+        
+            for key in substitute_headers.keys():
+                try:
+                    row[key] = row[substitute_headers[key]]
+                except:
+                    pass
+    except Exception as e:
+        print(f"Input error on line {line}: {row}")
+        print(e)
 
     output_data = []
+    line = 0
     # List of output headers required by NeoDen. 
     output_header = ['Designator', 'Comment', 'Footprint', 'Mid X', 'Mid Y', 
                      'Rotation', 'Head', 'FeederNo', 'Mount Speed (%)', 'Pick Height(mm)', 'Place Height(mm)', 'Mode', 'Skip']
-    for row in input_data:
-        output_data.append([row[key] for key in output_header])
+    try:
+        for row in input_data:
+            line = line+1
+            output_data.append([row[key] for key in output_header])
+    except Exception as e:
+        print(f"Output error on line {line}: {row}")
+        print(e)
 
     return output_data, output_header
