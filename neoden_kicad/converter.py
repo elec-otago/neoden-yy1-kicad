@@ -32,7 +32,7 @@ def convert(input_data):
     # List of substitutions of headers
     substitute_headers = {
         'Comment': 'Val',
-        'Ref': 'Designator',
+        'Designator': 'Ref',
         'Mid X': 'PosX',
         'Mid Y': 'PosY',
         'Rotation': 'Rot'

@@ -17,6 +17,11 @@ test:
 	neoden_kicad --pos data/CPL-test.csv --out neoden-test.csv
 	deactivate
 
+test2:
+	. ./venv/bin/activate
+	neoden_kicad --pos data/kicad_raw_pos.csv --out neoden-test.csv
+	deactivate
+
 lint:
 	pylint --extension-pkg-whitelist=numpy --ignored-modules=numpy --extension-pkg-whitelist=astropy tart_tools
 
