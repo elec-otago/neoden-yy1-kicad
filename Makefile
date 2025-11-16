@@ -3,32 +3,59 @@
 # To do this type
 #     make develop
 # in this directory.
+
+# Toolchains
+PYTHON = python3
+LINT = pylint
+INSTALLER = pyinstaller
+UPX = upx
+
+# Source
+MAIN_PY = neoden_kicad.py
+PROJECT_NAME = neoden_kicad
+
+# Destination
+DIST_DIR = dist
+
+
 .ONESHELL:
 
 develop:
-	python3 -m venv venv
+	$(PYTHON) -m venv venv
 	. ./venv/bin/activate
 	pip3 install -e .
 	deactivate
 
-
 test:
 	. ./venv/bin/activate
-	neoden_kicad --pos data/CPL-test.csv --out neoden-test.csv
+	$(PYTHON) $(MAIN_PY) --pos data/CPL-test.csv --out data/CPL-out.csv
 	deactivate
 
 test2:
 	. ./venv/bin/activate
-	neoden_kicad --pos data/kicad_raw_pos.csv --out neoden-test.csv
+	$(PYTHON) $(MAIN_PY) --pos data/CPL-test.csv --out data/CPL-out.csv --feeder_map data/feeder_map.csv
+	deactivate
+
+test_bin:
+	. ./venv/bin/activate
+	./dist/$(PROJECT_NAME) --pos data/CPL-test.csv --out data/CPL-out.csv --feeder_map data/feeder_map.csv
 	deactivate
 
 lint:
-	pylint --extension-pkg-whitelist=numpy --ignored-modules=numpy --extension-pkg-whitelist=astropy tart_tools
+	$(LINT) --extension-pkg-whitelist=numpy --ignored-modules=numpy --extension-pkg-whitelist=astropy tart_tools
+
+install:
+	. ./venv/bin/activate
+	$(INSTALLER) -F $(MAIN_PY) --specpath $(DIST_DIR)
+	deactivate
+
+clean:
+	rm -rf $(DIST_DIR) build/ $(PROJECT_NAME).spec $(PROJECT_NAME).egg-info
 
 test_upload:
-	python3 setup.py sdist
+	$(PYTHON) setup.py sdist
 	twine upload --repository testpypi dist/*
 
 upload:
-	python3 setup.py sdist
+	$(PYTHON) setup.py sdist
 	twine upload --repository pypi dist/*
