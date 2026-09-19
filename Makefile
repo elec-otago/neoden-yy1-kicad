@@ -36,6 +36,11 @@ test2:
 	$(PYTHON) $(MAIN_PY) --pos data/CPL-test.csv --out data/CPL-out.csv --feeder_map data/feeder_map.csv
 	deactivate
 
+test3:
+	. ./venv/bin/activate
+	$(PYTHON) $(MAIN_PY) -h
+	deactivate
+
 test_bin:
 	. ./venv/bin/activate
 	./dist/$(PROJECT_NAME) --pos data/CPL-test.csv --out data/CPL-out.csv --feeder_map data/feeder_map.csv

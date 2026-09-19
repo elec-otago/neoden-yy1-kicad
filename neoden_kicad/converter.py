@@ -6,6 +6,7 @@
     License: GPLv3
 '''
 import re
+import math
 
 
 """
@@ -18,8 +19,9 @@ global feeder_map
 
 ## A list of regex patterns to match the footprint, and substitutions to make
 footprint_map = [ 
-                ("[RCLD]_([0-9]+)_[0-9]+Metric\Z", "\g<1>D"), # C_0603_1608Metric -> 0603D
+                ("[RCLD]_([0-9]+)_[0-9]+Metric\Z", "\g<1>D"), # C_0603_1608Metric -> 0603C
                 ("D_SOD-([0-9]+)\Z", "SOD_\g<1>"), # D_SOD_XXX -> SODXXX
+                ("LED_([0-9]+)_[0-9]+Metric\Z", "\g<1>D"), # LED_0603_1608Metric -> 0603D
                 ("SOT-([0-9]+)-([0-9]+)*", "SOT-\g<1>-\g<2>"), # SOT-YY-XX -> SOT-23-5
                 ("SOT-([0-9]+)\Z", "SOT_\g<1>"), # SOT-23 -> SOT-23
                 ("QFN-([0-9]+)*", "QFN-\g<1>"), # QFN-8-xxx -> QFN_8
@@ -76,7 +78,7 @@ def package_to_footprint(package):
         "SOD_123"
     """
     for c in footprint_map:
-        if re.search(c[0], package) is not None:
+        if re.match(c[0], package) is not None:
             return re.sub(c[0], c[1], package)
         
     print(f"\033[33mWarning:\033[0m No converter found for package: {package}")
@@ -98,10 +100,9 @@ def value_to_feederNo(value, package):
         "2"
     """
     for c in feeder_map:
-        if (re.search(c[0], value) is not None) and (re.search(c[1], package) is not None):
+        if (re.fullmatch(c[0], value) is not None) and (re.match(c[1], package) is not None):
+            # print(f"\033[35mDEBUG:\033[0m Matched feeder {c[2]} for component: {value}({package})")
             return c[2]
-        
-    print(f"\033[33mWarning:\033[0m No feeder found for component: {value}({package})")
     return '0'
 
 def comp_pos_top(comp_pos):
@@ -116,7 +117,7 @@ def comp_pos_top(comp_pos):
     """
     x_prime = round(float(comp_pos[0]),6)
     y_prime = round(float(comp_pos[1]),6)
-    angle_prime = round(float(comp_pos[2]),1)
+    angle_prime = round(float(comp_pos[2]),0)
     return [str(x_prime), str(y_prime), str(angle_prime)]
 
 def comp_pos_bottom(comp_pos, board_length):
@@ -131,7 +132,9 @@ def comp_pos_bottom(comp_pos, board_length):
     """
     x_prime = round(float(board_length) - float(comp_pos[0]), 6)
     y_prime = round(float(comp_pos[1]), 6)
-    angle_prime = round(float(comp_pos[2]), 1)
+    angle_rad = math.radians(float(comp_pos[2]))
+    angle_prime = math.degrees(math.atan2(math.sin(angle_rad), -math.cos(angle_rad)))
+    angle_prime = round(angle_prime, 0)
     return [str(x_prime), str(y_prime), str(angle_prime)]
 
 
@@ -244,7 +247,10 @@ def convert(input_data):
                     pass
             
             ## convert data to NeoDen format
-            row['Mid X'], row['Mid Y'], row['Rotation'] = comp_pos_bottom([row['Mid X'], row['Mid Y'], row['Rotation']], board_length) if (layer == 'bottom') else comp_pos_top([row['Mid X'], row['Mid Y'], row['Rotation']])
+            if (layer == 'bottom' and (board_length - 0.0) > 1e-5):
+                row['Mid X'], row['Mid Y'], row['Rotation'] = comp_pos_bottom([row['Mid X'], row['Mid Y'], row['Rotation']], board_length)
+            else:
+                row['Mid X'], row['Mid Y'], row['Rotation'] = comp_pos_top([row['Mid X'], row['Mid Y'], row['Rotation']])
             row['Head'] = '01'              # Use head 1 default
             row['FeederNo'] = value_to_feederNo(row['Val'], row['Package']) # Get the feeder number from the map
             row['Mount Speed (%)'] = '100'
@@ -253,6 +259,10 @@ def convert(input_data):
             row['Mode'] = '1'
             row['Skip'] = '0'
             row['Footprint'] = package_to_footprint(row['Package'])
+
+            ## debug print
+            # print(f"DEBUG: Converted line {line}: {row}")
+            # print(f"Match feeder: {row['FeederNo']} for {row['Val']}({row['Package']})")
     except Exception as e:
         print(f"\033[31mError:\033[0m Input error on line {line}: {row}")
         print(e)
